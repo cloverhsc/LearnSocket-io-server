@@ -4,13 +4,9 @@ import express from 'express';
 import cors from 'cors';
 import { Server } from 'socket.io';
 
-// const bodyParser = require('body-parser');
-// const cors = require('cors');
-
-// const express = require('express');
 const app = express();
 const port = 5000;
-// const { Server } = require('socket.io');
+
 
 const io = new Server(3000, {
   cors: {
