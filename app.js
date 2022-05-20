@@ -65,30 +65,32 @@ io.on('connection', (socket) => {
 
 io.of('/chat').on('connection', (socket) => {
   console.log('a user connected to /chat');
+  const sockets = io.of('/chat').fetchSockets();
 
-  /* setInterval(() => {
-    const msg = faker.random.word();
-    console.log(`Send ${msg} into /chat`);
-    socket.send(`${msg}`);
-  }, 5000); */
   io.of('/chat').emit('message', 'Hello from server');
 
   socket.on('join', (data) => {
-    console.log(data);
     socket.join(data.room);
-    /* setTimeout(() => {
-      console.log(`${data.user} joined the ${data.room}`);
-      io.to(data.room).emit('message', `${data.username} joined the ${data.room}`);
-    }, 8000); */
     console.log(`${data.user} joined the ${data.room}`);
     io.of('/chat').to(data.room).emit('message', `${data.user} joined the ${data.room}`);
-
   });
 
+  socket.on('message', (data) => {
+    console.log(data);
+    io.of('/chat').to(data.room).emit('message', data.message);
+  });
+
+  socket.on('leave', (data) => {
+    console.log(data);
+    socket.leave(data.room);
+    console.log(`${data.user} left the ${data.room}`);
+    io.of('/chat').to(data.room).emit('message', `${data.user} left the ${data.room}`);
+  })
 
   socket.on("disconnect", () => {
     console.log("user disconnected from /chat");
   });
+
 });
 
 
