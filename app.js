@@ -65,19 +65,27 @@ io.on('connection', (socket) => {
 
 io.of('/chat').on('connection', (socket) => {
   console.log('a user connected to /chat');
-  const sockets = io.of('/chat').fetchSockets();
 
   io.of('/chat').emit('message', 'Hello from server');
+  const roster = socket.adapter.rooms;
+  // console.log(...roster.entries())
 
   socket.on('join', (data) => {
     socket.join(data.room);
     console.log(`${data.user} joined the ${data.room}`);
     io.of('/chat').to(data.room).emit('message', `${data.user} joined the ${data.room}`);
+    const roster = socket.adapter.rooms;
+    // console.log(...roster.entries())
+
+    socket.on(data.room, (data) => {
+      console.log('room', data);
+      io.of('/chat').to(data.room).emit(data.room, data.message);
+    });
   });
 
   socket.on('message', (data) => {
     console.log(data);
-    io.of('/chat').to(data.room).emit('message', data.message);
+    io.of('/chat').emit('message', `${data.user} : ${data.message}`);
   });
 
   socket.on('leave', (data) => {
