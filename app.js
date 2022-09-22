@@ -3,9 +3,11 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import cors from 'cors';
 import { Server } from 'socket.io';
+import * as cloud from './cloud-pod-view.js';
 
 const app = express();
 const port = 5000;
+const router = express.Router();
 
 
 const io = new Server(3000, {
@@ -28,6 +30,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/cloud', cloud.getTree);
 
 
 io.on('connection', (socket) => {
