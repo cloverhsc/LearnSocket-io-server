@@ -21,7 +21,7 @@ const io = new Server(3000, {
 });
 
 var corsOptions = {
-  origin: `http://localhost:${port}`,
+  origin: `*`,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
@@ -30,8 +30,8 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/cloud', cloud.getTree);
-
+app.get('/cloud/podview/tree', cloud.getTree);
+app.get('/cloud/podview/drawerconfig/pod', cloud.getPodDrawerConfig);
 
 io.on('connection', (socket) => {
   console.log('a user connected');
